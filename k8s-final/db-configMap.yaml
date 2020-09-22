@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-configuration
+  labels:
+    app: db
+data:
+  POSTGRES_DB: "django-db"
+  POSTGRES_USER: "postgres-user"

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: db-env
+  name: env
+data:
+  DB_ENGINE: django.db.backends.postgresql
+  DB_HOST: postgres-service
+  DEBUG: "1"
+  DJANGO_ALLOWED_HOSTS: localhost 127.0.0.1 [::1] messageboard.com
+  SECRET_KEY: '*olgb7z'
+
