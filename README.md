@@ -1,4 +1,4 @@
-Allows you to deploy messageboardapp with 3 basic commands:  
+Allows you to deploy messageboardapp with 3 basic commands to either docker or kubernetes:  
 
 1.  docker-compose up -d --build (builds the images and deploys them in a pure docker environment)
 2.  docker stack deploy -c docker-compose.yml messageboardapp-stack  (deploys existing images to a kubernetes environment using the docker-compose file)
