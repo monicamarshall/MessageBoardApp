@@ -1,0 +1,21 @@
+PS C:\data\minikubeTests\MessageBoardApp> docker-compose down -v
+
+PS C:\data\minikubeTests\MessageBoardApp> docker-compose up -d --build
+
+PS C:\data\minikubeTests\MessageBoardApp> docker-compose exec web python manage.py collectstatic
+
+PS C:\data\minikubeTests\MessageBoardApp> docker-compose exec web python manage.py migrate --run-syncdb
+
+PS C:\data\minikubeTests\MessageBoardApp> docker-compose exec web python manage.py createsuperuser
+
+PS C:\data\minikubeTests\MessageBoardApp> docker-compose logs -f
+
+Access messageboardapp at:
+
+http://messageboard.com:1338/   or   http://localhost:1338/   (an ingress url messageboard.com is added to ALLOWED_HOSTS in settings file.  Make sure to add messageboard.com to your hosts file.
+
+Port specified in docker-compose.yml file
+
+Access messageboardapp admin console to add messages:
+
+http://messageboard.com:1338/admin/   or http://localhost:1338/admin/
