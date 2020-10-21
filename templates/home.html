@@ -1,6 +1,41 @@
-<h1>Message Board</h1>
-<ul>
-  {% for post in all_posts_list %}
-    <li>{{ post.text }}</li>
-  {% endfor %}
-</ul>
+<html lang="en-us">
+<head>
+<title>MessageBoardApp Posts</title>
+<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css">
+<link rel="stylesheet" type="text/css"
+	href="/static/admin/css/dashboard.css">
+<link rel="stylesheet" type="text/css"
+	href="/static/admin/css/responsive.css">
+
+</head>
+<body>
+
+	<!-- Header -->
+	<div id="header">
+		<div id="branding">
+
+			<h1 id="site-name">
+				<a href="/admin/">Django administration</a>
+			</h1>
+
+		</div>
+	</div>
+	<!-- END Header -->
+
+	<div class="breadcrumbs">
+		<h1>Message Board Posts</h1>
+	</div>
+
+	<div class="app-auth module">
+		<table>
+
+			{% for post in all_posts_list %}
+			<tr class="model-group">
+				<td class="addLink">{{ post.text }}</td>
+			</tr>
+			{% endfor %}
+
+		</table>
+	</div>
+</body>
+</html>
