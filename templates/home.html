@@ -26,6 +26,26 @@
 		<h1>Message Board Posts</h1>
 	</div>
 
+
+	<h1>Add post</h1>
+	<div id="content-main">
+		<form action="/" method="post" novalidate>
+            {% csrf_token %}
+			<div>
+				<fieldset class="module aligned ">
+					<div class="form-row field-text">
+						<div>
+							<label class="required" for="id_text">Text:</label>
+							{{ form.body }}
+						</div>
+					</div>
+				</fieldset>
+				
+				<input type="submit" value="Save" name="_save">
+			</div>
+		</form>
+	</div>
+
 	<div class="app-auth module">
 		<table>
 
@@ -37,5 +57,10 @@
 
 		</table>
 	</div>
+	<script>
+		if (window.history.replaceState) {
+			window.history.replaceState(null, null, window.location.href);
+		}
+	</script>
 </body>
 </html>
