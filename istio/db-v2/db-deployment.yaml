@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service-v2
+  labels:
+    app: db-v2
+spec:
+  ports:
+    - port: 5432
+      name: db-v2
+      nodePort: 31102
+  type: NodePort
+  selector:
+    app: db-v2
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-v2
+  labels:
+    app: db-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-v2
+  template:
+    metadata:
+      labels:
+        app: db-v2
+    spec:
+      containers:
+      - name: db-v2
+        image: postgres:12.0-alpine
+
+        envFrom:
+          - configMapRef:
+              name: postgres-configuration-v2
+        env:
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: password
+        ports:
+        - containerPort: 5432
+          name: db-v2
+        volumeMounts:
+        - name: db-data-v2
+          mountPath: /var/lib/postgresql/data
+ 
+        readinessProbe:
+           exec:
+             command:
+               - bash
+               - "-c"
+               - "psql -U$POSTGRES_USER -d$POSTGRES_DB -c 'SELECT 1'"
+           initialDelaySeconds: 15
+           timeoutSeconds: 2
+        livenessProbe:
+          exec:
+            command:
+              - bash
+              - "-c"
+              - "psql -U$POSTGRES_USER -d$POSTGRES_DB -c 'SELECT 1'"
+          initialDelaySeconds: 15
+          timeoutSeconds: 2
+
+      volumes:
+      - name: db-data-v2
+        persistentVolumeClaim:
+          claimName: postgres-pv-claim-v2
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pv-claim-v2
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi

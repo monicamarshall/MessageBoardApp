@@ -1,0 +1,208 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: C:\bin\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: messageboardapp
+  name: messageboardapp
+spec:
+  ports:
+  - port: 8088
+    name: http
+  selector:
+    io.kompose.service: messageboardapp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\bin\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: messageboardapp
+    version: v1
+  name: messageboardapp-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: messageboardapp
+      version: v1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\bin\kompose.exe convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: messageboardapp
+        version: v1
+    spec:
+      volumes:
+          - name: mount-0
+            hostPath:
+              path: /
+              type: ''
+      containers:
+      - args:
+        - gunicorn
+        - messageboardapp.wsgi:application
+        - --bind
+        - 0.0.0.0:8000
+        env:
+        - name: DB_ENGINE
+          valueFrom:
+            configMapKeyRef:
+              key: DB_ENGINE
+              name: env
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: DB_HOST
+              name: env
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_DB
+              name: postgres-configuration
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: postgres-credentials
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_USER
+              name: postgres-configuration
+        - name: DEBUG
+          valueFrom:
+            configMapKeyRef:
+              key: DEBUG
+              name: env
+        - name: DJANGO_ALLOWED_HOSTS
+          valueFrom:
+            configMapKeyRef:
+              key: DJANGO_ALLOWED_HOSTS
+              name: env
+        - name: SECRET_KEY
+          valueFrom:
+            configMapKeyRef:
+              key: SECRET_KEY
+              name: env
+        resources: {}
+        volumeMounts:
+          - name: mount-0
+            mountPath: /static
+            subPath: static-volume
+        image: messageboard-app-v1:latest
+        imagePullPolicy: "IfNotPresent"
+        name: messageboardapp
+        ports:
+        - containerPort: 8088
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\bin\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: messageboardapp
+    version: v2
+  name: messageboardapp-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: messageboardapp
+      version: v2
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\bin\kompose.exe convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: messageboardapp
+        version: v2
+    spec:
+      volumes:
+          - name: mount-0
+            hostPath:
+              path: /
+              type: ''
+      containers:
+      - args:
+        - gunicorn
+        - messageboardapp.wsgi:application
+        - --bind
+        - 0.0.0.0:8000
+        env:
+        - name: DB_ENGINE
+          valueFrom:
+            configMapKeyRef:
+              key: DB_ENGINE
+              name: env
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: DB_HOST
+              name: env
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_DB
+              name: postgres-configuration
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: postgres-credentials
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_USER
+              name: postgres-configuration
+        - name: DEBUG
+          valueFrom:
+            configMapKeyRef:
+              key: DEBUG
+              name: env
+        - name: DJANGO_ALLOWED_HOSTS
+          valueFrom:
+            configMapKeyRef:
+              key: DJANGO_ALLOWED_HOSTS
+              name: env
+        - name: SECRET_KEY
+          valueFrom:
+            configMapKeyRef:
+              key: SECRET_KEY
+              name: env
+        resources: {}
+        volumeMounts:
+          - name: mount-0
+            mountPath: /static
+            subPath: static-volume
+        image: messageboard-app-v2:latest
+        imagePullPolicy: "IfNotPresent"
+        name: messageboardapp
+        ports:
+        - containerPort: 8088
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+status: {}

@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: messageboardapp
+  labels: 
+    app: messageboardapp
+    service: messageboardapp
+spec:
+  selector:
+    app: messageboardapp
+  ports:
+  - port: 8088
+    name: http    
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: messageboardapp-v1
+  labels:
+    app: messageboardapp
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: messageboardapp
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: messageboardapp
+        version: v1
+    spec:
+      volumes:
+        - name: mount-0
+          hostPath:
+            path: /
+            type: ''  
+      containers:
+      - name: messageboardapp
+        image: messageboard-app-v1:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8088
+        args:
+        - gunicorn
+        - messageboardapp.wsgi:application
+        - --bind
+        - 0.0.0.0:8088
+        env:
+        - name: DB_ENGINE
+          valueFrom:
+            configMapKeyRef:
+              key: DB_ENGINE
+              name: env-v1
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: DB_HOST
+              name: env-v1
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_DB
+              name: postgres-configuration-v1
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: postgres-credentials
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_USER
+              name: postgres-configuration-v1
+        - name: DEBUG
+          valueFrom:
+            configMapKeyRef:
+              key: DEBUG
+              name: env-v1
+        - name: DJANGO_ALLOWED_HOSTS
+          valueFrom:
+            configMapKeyRef:
+              key: DJANGO_ALLOWED_HOSTS
+              name: env-v1
+        - name: SECRET_KEY
+          valueFrom:
+            configMapKeyRef:
+              key: SECRET_KEY
+              name: env-v1
+        resources: {}
+        volumeMounts:
+          - name: mount-0
+            mountPath: /static
+            subPath: static-volume
+
